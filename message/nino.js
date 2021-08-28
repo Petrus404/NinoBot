@@ -12,7 +12,6 @@ const axios = require("axios")
 const fs = require("fs-extra")
 const yts = require("yt-search")
 const { util } = require('util')
-const nhentai = require('nhentai-js')
 
 const { getBuffer, getGroupAdmins, getRandom, runtime, pickRandom, clockString, sleep } = require('../lib/simple')
 const { color } = require('../lib/color')
@@ -154,7 +153,7 @@ module.exports = {
 			case 'help': case 'menu': { 
 				 let teks = `Yo @${sender.split('@')[0]} 👋\n\n*Tanggal:* ${tanggal}\n*Waktu:* ${waktu.charAt(0).toUpperCase() + waktu.slice(1)} || ${time}\n*Runtime Bot:* ${clockString(process.uptime())}\n\n`
 				 for (let fiture of fitur) {
-					teks += (monospace(`• ${prefix+fiture}\n`))
+					teks += (monospace(`� ${prefix+fiture}\n`))
 			    }
 			        let tod = fs.readFileSync('./media/Nakano.jpg')
                     conn.sendMessage(chat, { contentText: `${teks}`, footerText: 'NinoBot', buttons: [{ buttonId: `${prefix}creator`, buttonText: { displayText: 'CREATOR' }, type: 1 },{ buttonId: `${prefix}scbot`, buttonText: { displayText: 'SCRIPT BOT' }, type: 1 }], headerType: 'LOCATION', locationMessage: { degreesLatitude: '', degreesLongitude: '', jpegThumbnail: tod, contextInfo: {mentionedJid: [sender]}}}, 'buttonsMessage')
@@ -176,62 +175,19 @@ module.exports = {
               }
               break
 //------------------< Search >-------------------
-          case 'nhentai': {
-        	  if (isNaN(args[0])) return reply(`Harus berupa angka`)
-	          nhentai.exists(args[0]).then((validate) => {
-              if (validate === true) {
-			  nhentai.getDoujin(args[0]).then(async (res) => {
-              let pepe = `Data didapatkan!\n\n`
-              pepe += `*NHENTAI INFO*\n\n`
-              pepe += `Title: ${res.title}\n`
-              pepe += `Japan Title: ${res.nativeTitle}\n`
-              pepe += `Parody: ${res.details.parodies[0]}\n`
-              pepe += `Pages: ${res.details.pages[0]}\n`
-              pepe += `Artist: ${res.details.artists[0]}\n`
-              pepe += `Uploaded: ${res.details.uploaded[0]}`
-              let txt = `Mau via Document atau disajikan dalam link pdf?`
-              let buttons = [{buttonId: `${prefix}nhlink ${args[0]}`,buttonText:{displayText: `LINK DOWNLOAD`},type:1},{buttonId:`${prefix}nhdl ${args[0]}`,buttonText:{displayText:'FILE'},type:1}]
-              fs.writeFileSync(`./${sender}.jpeg`, await getBuffer(res.pages[0]))
-              let imageMsg = ( await conn.prepareMessage(from, fs.readFileSync(`./${sender}.jpeg`))).message.imageMessage
-              let buttonsMessage = {footerText:`${txt}`, imageMessage: imageMsg,
-              contentText:`${pepe}`,buttons,headerType:4}
-              let prep = await conn.prepareMessageFromContent(from,{buttonsMessage},{})
-              conn.relayWAMessage(prep)
-              fs.unlinkSync(`./${sender}.jpeg`)
-             })
-         } else {
-               reply(`Code tidak valid`)
-               }
-             })
-           }
+          case 'nhentai': case 'nhentaipdf': case 'nhdl': {
+              if (!q) return reply('kodenya?')
+              reply('*_Tunggu permintaan anda sedang diproses_*')
+              get_result = await fetchJson(`https://api.lolhuman.xyz/api/nhentai/${q}?apikey=HaffzYourBaka`)
+              ini_image = await getBuffer(get_result.result.image[0])
+              data = await fetchJson(`https://api.lolhuman.xyz/api/nhentaipdf/${q}?apikey=HaffzYourBaka`)
+              pdf = await getBuffer(data.result)
+              conn.sendMessage(from, pdf, document, { quoted: msg, mimetype: Mimetype.pdf, filename: `${get_result.result.title_romaji}.pdf`, thumbnail: ini_image })
+             }
               break
-          case 'nhdl': case 'nhentaipdf': {
-              if (isNaN(args[0])) return reply(`Harus berupa angka`)
-              nhentai.exists(args[0]).then((validate) => {
-              if (validate === true) {
-              nhentai.getDoujin(args[0]).then((res) => {
-              exec(`nhentai --id=${args[0]} --output=./media --format=${args[0]} --no-html --pdf --rm-origin-dir`, async (error) => {
-              if (error) return reply('Mengerror banh')
-              await conn.sendMessage(from, fs.readFileSync(`./media/${args[0]}.pdf`), document, { quoted: msg, mimetype: Mimetype.pdf, filename: res.nativeTitle, thumbnail: res.pages[0] })
-              fs.unlinkSync(`./media/${args[0]}.pdf`)
-                 })
-                })
-               } else {
-                 reply(`Code tidak valid`)
-               }
-             })
-           }
-               break
-           case 'nhlink': {
-               if (isNaN(args[0])) return reply(`Harus berupa angka`)
-               nhentai.getDoujin(args[0]).then((res) => {
-               let txt = `Ini link nya kak\n${res.link}`
-               conn.sendMessage(from, txt, text, { quoted: msg})
-               })
-              }
-               break
            case 'nhsearch': case 'nhentaisearch': {
                if (!q) return reply(`Example: ${prefix}nhentaisearch Nakano Nino`)
+               reply('*_Tunggu permintaan anda sedang diproses_*')
                let rowsdata = [];
                let res = await axios.get(`https://api.lolhuman.xyz/api/nhentaisearch?apikey=HafzzYourBaka&query=${budy}`)
                for (let i = 0; i < res.data.result.length; i++) {
@@ -242,12 +198,14 @@ module.exports = {
            }
                break
           case 'hentai': {
+          	reply('*_Tunggu permintaan anda sedang diproses_*')
               getBuffer(`https://api.lolhuman.xyz/api/random/nsfw/hentai?apikey=HafzzYourBaka`).then((gambar) => {
                  conn.sendMessage(from, gambar, image, { quoted: msg })})
               }
               break
           case 'yts': case 'ytsearch': {
 			  if (!q) return reply(`Penggunaan ${command} query`)
+			  reply('*_Tunggu permintaan anda sedang diproses_*')
               let { videos } = await yts(q)
 			  let length = videos.length < 10 ? videos.length : 10
 			  let capt = ``
@@ -264,6 +222,7 @@ module.exports = {
           case 'play': {
 			   playing[sender] = time
 			   if (!q) return reply(`Penggunan: ${prefix + command} judul / link yt / reply chat ini dgn judul`)
+			   reply('*_Tunggu permintaan anda sedang diproses_*')
 			   let { videos } = await yts(q)
 			   axios.get('https://api.zeks.xyz/api/ytplaymp3/2?apikey=Nyarlathotep&q=' + q)
 				 .then(async(res) => {
@@ -281,8 +240,9 @@ module.exports = {
 		   case 'tiktokdl': case 'tiktok': {
                 if (!q) return reply('Linknya?')
                 if (!q.includes('tiktok')) return reply('pastikan link nya sudah benar!')
+                reply('*_Tunggu permintaan anda sedang diproses_*')
                 let data = await fetchJson(`https://api.lolhuman.xyz/api/tiktok?apikey=HafzzYourBaka&url=${args[0]}`)
-                let teks = `⚜️ *Nickname*: ${data.result.author.nickname}\n❤️ *Like*: ${data.result.statistic.diggCount}\n💬 *Komentar*: ${data.result.statistic.commentCount}\n🔁 *Share*: ${data.result.statistic.shareCount}\n🎞️ *Views*: ${data.result.statistic.playCount}\n📑 *Desc*: ${data.result.title}`
+                let teks = ` *Nickname*: ${data.result.author.nickname}\n *Like*: ${data.result.statistic.diggCount}\n *Komentar*: ${data.result.statistic.commentCount}\n *Share*: ${data.result.statistic.shareCount}\n *Views*: ${data.result.statistic.playCount}\n *Desc*: ${data.result.title}`
                 let ini_video = await getBuffer(data.result.link)
                 conn.sendMessage(from, ini_video, video, { quoted: msg, caption: teks })
               }
@@ -290,6 +250,7 @@ module.exports = {
 		   case 'igdl': case 'instagram': {
                try {
                    if (!q) return reply(`Penggunan: ${prefix + command} link ig`)
+                   reply('*_Tunggu permintaan anda sedang diproses_*')
                    let res = await axios.get(`https://api.lolhuman.xyz/api/instagram2?apikey=HafzzYourBaka&url=${args[0]}`)
                    let data = res.data.result
                    for (let i = 0; i < data.media.length; i++) {
