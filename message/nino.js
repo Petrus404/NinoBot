@@ -151,7 +151,7 @@ module.exports = {
 				}
 				break
 			case 'help': case 'menu': { 
-				 let teks = `Yo @${sender.split('@')[0]} ðŸ‘‹\n\n*Tanggal:* ${tanggal}\n*Waktu:* ${waktu.charAt(0).toUpperCase() + waktu.slice(1)} || ${time}\n*Runtime Bot:* ${clockString(process.uptime())}\n\n`
+				 let teks = `Yo @${sender.split('@')[0]} 👋\n\n*Tanggal:* ${tanggal}\n*Waktu:* ${waktu.charAt(0).toUpperCase() + waktu.slice(1)} || ${time}\n*Runtime Bot:* ${clockString(process.uptime())}\n\n`
 				 for (let fiture of fitur) {
 					teks += (monospace(`• ${prefix+fiture}\n`))
 			    }
