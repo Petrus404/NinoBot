@@ -151,9 +151,9 @@ module.exports = {
 				}
 				break
 			case 'help': case 'menu': { 
-				 let teks = `Yo @${sender.split('@')[0]} 👋\n\n*Tanggal:* ${tanggal}\n*Waktu:* ${waktu.charAt(0).toUpperCase() + waktu.slice(1)} || ${time}\n*Runtime Bot:* ${clockString(process.uptime())}\n\n`
+				 let teks = `Yo @${sender.split('@')[0]} ðŸ‘‹\n\n*Tanggal:* ${tanggal}\n*Waktu:* ${waktu.charAt(0).toUpperCase() + waktu.slice(1)} || ${time}\n*Runtime Bot:* ${clockString(process.uptime())}\n\n`
 				 for (let fiture of fitur) {
-					teks += (monospace(`� ${prefix+fiture}\n`))
+					teks += (monospace(`• ${prefix+fiture}\n`))
 			    }
 			        let tod = fs.readFileSync('./media/Nakano.jpg')
                     conn.sendMessage(chat, { contentText: `${teks}`, footerText: 'NinoBot', buttons: [{ buttonId: `${prefix}creator`, buttonText: { displayText: 'CREATOR' }, type: 1 },{ buttonId: `${prefix}scbot`, buttonText: { displayText: 'SCRIPT BOT' }, type: 1 }], headerType: 'LOCATION', locationMessage: { degreesLatitude: '', degreesLongitude: '', jpegThumbnail: tod, contextInfo: {mentionedJid: [sender]}}}, 'buttonsMessage')
@@ -242,7 +242,7 @@ module.exports = {
                 if (!q.includes('tiktok')) return reply('pastikan link nya sudah benar!')
                 reply('*_Tunggu permintaan anda sedang diproses_*')
                 let data = await fetchJson(`https://api.lolhuman.xyz/api/tiktok?apikey=HafzzYourBaka&url=${args[0]}`)
-                let teks = ` *Nickname*: ${data.result.author.nickname}\n *Like*: ${data.result.statistic.diggCount}\n *Komentar*: ${data.result.statistic.commentCount}\n *Share*: ${data.result.statistic.shareCount}\n *Views*: ${data.result.statistic.playCount}\n *Desc*: ${data.result.title}`
+                let teks = `⚜️ *Nickname*: ${data.result.author.nickname}\n❤️ *Like*: ${data.result.statistic.diggCount}\n💬 *Komentar*: ${data.result.statistic.commentCount}\n🔁 *Share*: ${data.result.statistic.shareCount}\n🎞️ *Views*: ${data.result.statistic.playCount}\n📑 *Desc*: ${data.result.title}`
                 let ini_video = await getBuffer(data.result.link)
                 conn.sendMessage(from, ini_video, video, { quoted: msg, caption: teks })
               }
