@@ -190,7 +190,7 @@ module.exports = {
               pepe += `Artist: ${res.details.artists[0]}\n`
               pepe += `Uploaded: ${res.details.uploaded[0]}`
               let txt = `Mau via Document atau disajikan dalam link pdf?`
-              let buttons = [{buttonId: `${prefix}nhlink ${budy}`,buttonText:{displayText: `LINK DOWNLOAD`},type:1},{buttonId:`${prefix}nhdl ${budy}`,buttonText:{displayText:'FILE'},type:1}]
+              let buttons = [{buttonId: `${prefix}nhlink ${args[0]}`,buttonText:{displayText: `LINK DOWNLOAD`},type:1},{buttonId:`${prefix}nhdl ${args[0]}`,buttonText:{displayText:'FILE'},type:1}]
               fs.writeFileSync(`./${sender}.jpeg`, await getBuffer(res.pages[0]))
               let imageMsg = ( await conn.prepareMessage(from, fs.readFileSync(`./${sender}.jpeg`))).message.imageMessage
               let buttonsMessage = {footerText:`${txt}`, imageMessage: imageMsg,
@@ -249,8 +249,8 @@ module.exports = {
           case 'yts': case 'ytsearch': {
 			  if (!q) return reply(`Penggunaan ${command} query`)
               let { videos } = await yts(q)
-			  length = videos.length < 10 ? videos.length : 10
-			  capt = ``
+			  let length = videos.length < 10 ? videos.length : 10
+			  let capt = ``
 			  for (let i = 0; i < length; i++) {
 					capt += `*${videos[i].title}* (${videos[i].url})\n`
 					capt += `*By:* ${videos[i].author.name}\n`
@@ -282,7 +282,7 @@ module.exports = {
                 if (!q) return reply('Linknya?')
                 if (!q.includes('tiktok')) return reply('pastikan link nya sudah benar!')
                 let data = await fetchJson(`https://api.lolhuman.xyz/api/tiktok?apikey=HafzzYourBaka&url=${args[0]}`)
-                let teks = `⚜️ *Nickname*: ${data.result.author.nickname}\n❤️ *Like*: ${data.result.statistic.diggCount}\n💬 *Komentar*: ${data.result.statistic.commentCount}\n🔁 *Share*: ${data.result.statistic.shareCount}\n🎞️ *Views*: ${data.result.statistic.playCount}\n📑 *Desc*: ${data.result.title}`
+                let teks = ` *Nickname*: ${data.result.author.nickname}\n *Like*: ${data.result.statistic.diggCount}\n *Komentar*: ${data.result.statistic.commentCount}\n *Share*: ${data.result.statistic.shareCount}\n *Views*: ${data.result.statistic.playCount}\n *Desc*: ${data.result.title}`
                 let ini_video = await getBuffer(data.result.link)
                 conn.sendMessage(from, ini_video, video, { quoted: msg, caption: teks })
               }
@@ -309,28 +309,28 @@ module.exports = {
            	 reply('Sabar, Bot sedang Nulis\nBuku kiri')
                 let nulis = encodeURIComponent(q)
                 let buff = await getBuffer(`http://zekais-api.herokuapp.com/bukukiri?text=${nulis}&apikey=Dg8sQKKG`)
-                conn.sendMessage(from, buff, image, { quoted: msg })
+                conn.sendMessage(from, buff, image, { quoted: msg, caption: 'Oke Sudah Selesai ~' })
             }
                 break
             case 'nuliskanan': {
            	 reply('Sabar, Bot sedang Nulis\nBuku kanan')
                 let nulis = encodeURIComponent(q)
                 let buff = await getBuffer(`http://zekais-api.herokuapp.com/bukukanan?text=${nulis}&apikey=Dg8sQKKG`)
-                conn.sendMessage(from, buff, image, { quoted: msg })
+                conn.sendMessage(from, buff, image, { quoted: msg, caption: 'Oke Sudah Selesai ~' })
             }
                 break
             case 'foliokiri': {
                 reply('Sabar, Bot sedang Nulis\nBuku: folio kiri')
             	let nulis = encodeURIComponent(q)
                 let buff = await getBuffer(`http://zekais-api.herokuapp.com/foliokiri?text=${nulis}&apikey=Dg8sQKKG`)
-                conn.sendMessage(from, buff, image, { quoted: msg })
+                conn.sendMessage(from, buff, image, { quoted: msg, caption: 'Oke Sudah Selesai ~' })
             }
                 break
             case 'foliokanan': {
                 reply('Sabar, Bot sedang Nulis\nBuku: folio kanan')
                 let nulis = encodeURIComponent(q)
-                let buff = (`http://zekais-api.herokuapp.com/foliokanan?text=${nulis}&apikey=Dg8sQKKG`)
-                conn.sendMessage(from, buff, image, { quoted: msg })
+                let buff = await getBuffer(`http://zekais-api.herokuapp.com/foliokanan?text=${nulis}&apikey=Dg8sQKKG`)
+                conn.sendMessage(from, buff, image, { quoted: msg, caption: 'Oke Sudah Selesai ~' })
             }
                 break
 //------------------< INFO >-------------------
@@ -364,22 +364,7 @@ module.exports = {
               }
               break
 		      default:
-if (body.startsWith('=>')){
-if (!isOwner) return
-try {
-return conn.sendMessage(from, 
-`${a}📤 Input: ${budy.slice(3)}
-
-📤 OutPut: 
-${JSON.stringify(eval(budy.slice(2)),null,'\t')}
-${a}`
-,text, {quoted:msg })
-} catch(err) {
-e = String(err)
-reply(`${a} "err" :  "${e}"${a}`)
-}
-}
-             }
+		}
 		} catch (e) {
             e = String(e)
                if (!e.includes("this.isZero")) {
@@ -387,5 +372,5 @@ reply(`${a} "err" :  "${e}"${a}`)
 			}
          }
       }
-  }
+   }
 /* End */
