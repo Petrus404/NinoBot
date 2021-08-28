@@ -282,7 +282,7 @@ module.exports = {
                 if (!q) return reply('Linknya?')
                 if (!q.includes('tiktok')) return reply('pastikan link nya sudah benar!')
                 let data = await fetchJson(`https://api.lolhuman.xyz/api/tiktok?apikey=HafzzYourBaka&url=${args[0]}`)
-                let teks = ` *Nickname*: ${data.result.author.nickname}\n *Like*: ${data.result.statistic.diggCount}\n *Komentar*: ${data.result.statistic.commentCount}\n *Share*: ${data.result.statistic.shareCount}\n *Views*: ${data.result.statistic.playCount}\n *Desc*: ${data.result.title}`
+                let teks = `⚜️ *Nickname*: ${data.result.author.nickname}\n❤️ *Like*: ${data.result.statistic.diggCount}\n💬 *Komentar*: ${data.result.statistic.commentCount}\n🔁 *Share*: ${data.result.statistic.shareCount}\n🎞️ *Views*: ${data.result.statistic.playCount}\n📑 *Desc*: ${data.result.title}`
                 let ini_video = await getBuffer(data.result.link)
                 conn.sendMessage(from, ini_video, video, { quoted: msg, caption: teks })
               }
