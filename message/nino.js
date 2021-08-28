@@ -178,9 +178,9 @@ module.exports = {
           case 'nhentai': case 'nhentaipdf': case 'nhdl': {
               if (!q) return reply('kodenya?')
               reply('*_Tunggu permintaan anda sedang diproses_*')
-              let get_result = await fetchJson(`https://api.lolhuman.xyz/api/nhentai/${q}?apikey=HaffzYourBaka`)
+              let get_result = await fetchJson(`https://api.lolhuman.xyz/api/nhentai/${q}?apikey=HafzzYourBaka`)
               let ini_image = await getBuffer(get_result.result.image[0])
-              let data = await fetchJson(`https://api.lolhuman.xyz/api/nhentaipdf/${q}?apikey=HaffzYourBaka`)
+              let data = await fetchJson(`https://api.lolhuman.xyz/api/nhentaipdf/${q}?apikey=HafzzYourBaka`)
               let pdf = await getBuffer(data.result)
               conn.sendMessage(from, pdf, document, { quoted: msg, mimetype: Mimetype.pdf, filename: `${get_result.result.title_romaji}.pdf`, thumbnail: ini_image })
              }
