@@ -19,7 +19,7 @@
 | **IMAGEMAGICK** | [HERE](https://github.com/DuckyTeam/heroku-buildpack-imagemagick) |
 
 ## Features
-| **click disini** | [HERE](https://github.com/Nino-chan02/NinoBot/blob/main/fitur.json) |
+| **CEK DISINI** | [HERE](https://github.com/Nino-chan02/NinoBot/blob/main/fitur.json) |
 | :---------------------------------------------: | :-----------: |
 
 ## Contributors
