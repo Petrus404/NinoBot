@@ -11,11 +11,6 @@
 ![GitHub Top Language](https://github-readme-stats.vercel.app/api/top-langs/?username=Nino-chan02&layout=compact&theme=highcontrast)
 <br>
 
-## For Termux
-- sorry, this repo doesn't support termux :(
->[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Nino-chan02/NinoBot)
->
-
 ## <img src="https://github.com/TheDudeThatCode/TheDudeThatCode/blob/master/Assets/hmm.gif" width="29px"> BuildPack Heroku
 | BuildPack | LINK |
 |--------|--------|
