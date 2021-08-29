@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://telegra.ph/file/11afe8bcf630870e9ccb2.jpg" width="54%" height="50%" alt="Owner Nino-BOTZ"/>
+    <img src="https://telegra.ph/file/927939c008e2826bc2885.jpg" width="54%" height="50%" alt="Owner Nino-BOTZ"/>
     <br>
     <a href="https://github.com/Nino-chan02"><img title="Owner" src="https://img.shields.io/badge/Creator-Nino-black?style=for-the-badge&logo=windows"></a>
 </p>
@@ -19,7 +19,7 @@
 | **IMAGEMAGICK** | [HERE](https://github.com/DuckyTeam/heroku-buildpack-imagemagick) |
 
 ## Features
-| **click disini** | [HERE](https://github.com/Nino-chan02/SelfBotz/blob/main/nino.js#L360) |
+| **click disini** | [HERE](https://github.com/Nino-chan02/NinoBot/blob/main/fitur.json) |
 | :---------------------------------------------: | :-----------: |
 
 ## Contributors
