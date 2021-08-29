@@ -13,11 +13,11 @@ const fs = require("fs-extra")
 const yts = require("yt-search")
 const { util } = require('util')
 
-const { getBuffer, getGroupAdmins, getRandom, runtime, pickRandom, clockString, sleep } = require('../lib/simple')
+const { fetchJson, getBuffer, getGroupAdmins, getRandom, runtime, pickRandom, clockString, sleep } = require('../lib/simple')
 const { color } = require('../lib/color')
 let fitur = fs.readJsonSync('./fitur.json')
 
-let a = '```'
+
 let banChats = true
 global.playing = {}
 
@@ -38,7 +38,8 @@ module.exports = {
 		const time = moment.tz('Asia/Jakarta').format('HH:mm:ss z')
 		
 		const from = msg.key.remoteJid
-		const type = Object.keys(msg.message)[0]        
+		const type = Object.keys(msg.message)[0]   
+        const content = JSON.stringify(msg.message)
 		const command = body.startsWith(prefix) ? body.replace(prefix, '').trim().split(/ +/).shift().toLowerCase() : body
 		let budy = msg.message.conversation || msg.message[type].text
 		const args = body.trim().split(/ +/).slice(1)
@@ -67,8 +68,14 @@ module.exports = {
 			
              function monospace(string) {
                  return '```' + string + '```'
-        }   
-            
+        }  
+        
+             const isMedia = (type === 'imageMessage' || type === 'videoMessage')
+		     const isQuotedImage = type === 'extendedTextMessage' && content.includes('imageMessage')
+	         const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
+	         const isQuotedAudio = type === 'extendedTextMessage' && content.includes('audioMessage')
+		     const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
+      	
            if (body.startsWith('> ')) {
            if (!isOwner) return
 				try {
@@ -175,8 +182,8 @@ module.exports = {
               }
               break
 //------------------< Search >-------------------
-          case 'nhentai': case 'nhentaipdf': case 'nhdl': {
-              if (!q) return reply('kodenya?')
+          case 'nhdl': case 'nhentai': case 'nhpdf': case 'nhentaipdf': {
+              if (isNaN(args[0])) return reply(`Harus berupa angka`)
               reply('*_Tunggu permintaan anda sedang diproses_*')
               let get_result = await fetchJson(`https://api.lolhuman.xyz/api/nhentai/${q}?apikey=HafzzYourBaka`)
               let ini_image = await getBuffer(get_result.result.image[0])
@@ -189,7 +196,7 @@ module.exports = {
                if (!q) return reply(`Example: ${prefix}nhentaisearch Nakano Nino`)
                reply('*_Tunggu permintaan anda sedang diproses_*')
                let rowsdata = [];
-               let res = await axios.get(`https://api.lolhuman.xyz/api/nhentaisearch?apikey=HafzzYourBaka&query=${budy}`)
+               let res = await axios.get(`https://api.lolhuman.xyz/api/nhentaisearch?apikey=HafzzYourBaka&query=${args[0]}`)
                for (let i = 0; i < res.data.result.length; i++) {
                   rowsdata.push({ title: res.data.result[i].title_english, rowId: "", description: res.data.result[i].id })
 }
@@ -224,12 +231,13 @@ module.exports = {
 			   if (!q) return reply(`Penggunan: ${prefix + command} judul / link yt / reply chat ini dgn judul`)
 			   reply('*_Tunggu permintaan anda sedang diproses_*')
 			   let { videos } = await yts(q)
-			   axios.get('https://api.zeks.xyz/api/ytplaymp3/2?apikey=Nyarlathotep&q=' + q)
+			   axios.get('https://api.zeks.me/api/ytplaymp3?apikey=Nyarlathotep&q=' + q)
 				 .then(async(res) => {
 					reply('Playing ' + res.data.result.title + '...')
-					let thumbnail = await simple.getBuffer(res.data.result.thumb)
-					conn.sendMessage(chat, { degreesLatitude: '', degreesLongitude: '', name: res.data.result.title, address: 'Duration ' + res.data.result.duration + '\nSize ' + res.data.result.size, url: res.data.result.link, jpegThumbnail: thumbnail }, 'locationMessage', { quoted: msg })
-					conn.sendMessage(chat, { url: res.data.result.link }, 'audioMessage', { filename: res.data.result.title + '.mp3', mimetype: 'audio/mp4', quoted: msg, contextInfo: { externalAdReply: { title: res.data.result.title, body: videos[0].description, mediaType: 2, thumbnailUrl: res.data.result.thumb, mediaUrl: res.data.result.source }}})
+					let thumbnail = await getBuffer(res.data.result.thumbnail)
+					conn.sendMessage(chat, { degreesLatitude: '', degreesLongitude: '', name: res.data.result.title, address: 'Duration ' + res.data.result.duration + '\nSize ' + res.data.result.size, url: res.data.result.url_audio, jpegThumbnail: thumbnail }, 'locationMessage', { quoted: msg })
+					let audio = await getBuffer(res.data.result.url_audio)
+					conn.sendMessage(chat, audio, 'audioMessage', { filename: res.data.result.title + '.mp3', mimetype: 'audio/mp4', quoted: msg, contextInfo: { externalAdReply: { title: res.data.result.title, body: videos[0].description, mediaType: 2, thumbnailUrl: res.data.result.thumbnail, mediaUrl: res.data.result.source }}})
 					delete playing[sender]
 				  })
 				.catch(err => {
@@ -237,17 +245,17 @@ module.exports = {
 				})
 			}
 			   break
-		   case 'tiktokdl': case 'tiktok': {
-                if (!q) return reply('Linknya?')
-                if (!q.includes('tiktok')) return reply('pastikan link nya sudah benar!')
-                reply('*_Tunggu permintaan anda sedang diproses_*')
-                let data = await fetchJson(`https://api.lolhuman.xyz/api/tiktok?apikey=HafzzYourBaka&url=${args[0]}`)
-                let teks = `⚜️ *Nickname*: ${data.result.author.nickname}\n❤️ *Like*: ${data.result.statistic.diggCount}\n💬 *Komentar*: ${data.result.statistic.commentCount}\n🔁 *Share*: ${data.result.statistic.shareCount}\n🎞️ *Views*: ${data.result.statistic.playCount}\n📑 *Desc*: ${data.result.title}`
-                let ini_video = await getBuffer(data.result.link)
-                conn.sendMessage(from, ini_video, video, { quoted: msg, caption: teks })
+		    case 'tiktokdl': case 'tiktok': {
+               if (!q) return reply('Linknya?')
+               if (!q.includes('tiktok')) return reply('pastikan link nya sudah benar!')
+               reply('*_Tunggu permintaan anda sedang diproses_*')
+               let data = await fetchJson(`https://api.lolhuman.xyz/api/tiktok?apikey=HafzzYourBaka&url=${args[0]}`)
+               let teks = `⚜️ *Nickname*: ${data.result.author.nickname}\n❤️ *Like*: ${data.result.statistic.diggCount}\n💬 *Komentar*: ${data.result.statistic.commentCount}\n🔁 *Share*: ${data.result.statistic.shareCount}\n🎞️ *Views*: ${data.result.statistic.playCount}\n📑 *Desc*: ${data.result.title}`
+               let ini_video = await getBuffer(data.result.link)
+               conn.sendMessage(from, ini_video, video, { quoted: msg, caption: teks })
               }
-                break
-		   case 'igdl': case 'instagram': {
+               break
+		    case 'igdl': case 'instagram': {
                try {
                    if (!q) return reply(`Penggunan: ${prefix + command} link ig`)
                    reply('*_Tunggu permintaan anda sedang diproses_*')
@@ -294,6 +302,29 @@ module.exports = {
                 conn.sendMessage(from, buff, image, { quoted: msg, caption: 'Oke Sudah Selesai ~' })
             }
                 break
+//------------------< TOOLs >-------------------
+            case 'sgif': case 'sticker': case 's': {
+                if(type != 'videoMessage' && !isQuotedVideo && !isQuotedImage && type != 'imageMessage') return reply('Wrong format!')
+                const getbuff = isQuotedVideo || isQuotedImage ? JSON.parse(JSON.stringify(msg).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : msg
+                const dlfile = await conn.downloadMediaMessage(getbuff)
+                if(type == 'videoMessage' || isQuotedVideo) conn.sendMp4AsSticker(from, dlfile.toString('base64'), msg, { pack: `NinoBot`, author: `Marz` })
+                else conn.sendImageAsSticker(from, dlfile.toString('base64'), msg, { pack: `NinoBot😍😍`, author: `Marz` })
+               }
+                break
+            case 'toimg': case 'stickertoimage':{
+                if (!isQuotedSticker) return reply('Reply stiker nya')
+                let encmedia = JSON.parse(JSON.stringify(msg).replace('quotedM','m')).message.extendedTextMessage.contextInfo
+				let media = await conn.downloadAndSaveMediaMessage(encmedia)
+                    reply('*_Tunggu permintaan anda sedang diproses_*')
+					let ran = getRandom('.png')
+					exec(`ffmpeg -i ${media} ${ran}`, (err) => {
+						fs.unlinkSync(media)
+						if (err) return reply('Gagal :V')
+						conn.sendMessage(from, fs.readFileSync(ran), image, {quoted: msg, caption: 'Ini Kak'})
+						fs.unlinkSync(ran)
+					})
+                }
+				break
 //------------------< INFO >-------------------
            case 'owner': case 'creator': {
                conn.sendContact(from, '6288286421519@whatsapp.net', 'Nino', msg)
